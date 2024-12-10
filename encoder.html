@@ -12,13 +12,15 @@
     <header>
         <nav>
             <a href="./index.html" class="logo">SotiCode</a>
-            <ul>
+            <ul class="nav-links">
                 <li><a href="./encoder.html">Encoder</a></li>
                 <li><a href="./decoder.html">Decoder</a></li>
                 <li><a href="./about.html">About</a></li>
             </ul>
+            <div class="hamburger" onclick="toggleMenu()">&#9776;</div>
         </nav>
     </header>
+
     <main>
         <section>
             <h1>Encode Audio into Binary Image</h1>
@@ -107,6 +109,11 @@
                         header.classList.add('visible');
                     }
                 });
+
+                function toggleMenu() {
+                    const navLinks = document.querySelector('.nav-links');
+                    navLinks.classList.toggle('active');
+                }
 
 
 
