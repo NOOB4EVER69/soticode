@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Binary to SotiCode</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+    <header>
+        <nav>
+            <a href="./index.html" class="logo">SotiCode</a>
+            <ul>
+                <li><a href="./encoder.html">Encoder</a></li>
+                <li><a href="./decoder.html">Decoder</a></li>
+                <li><a href="./about.html">About</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section>
+            <h1>Decode SotiCode into Audio</h1>
+            <p>Upload a SotiCode to decode it back into an MP3 audio file.</p>
+            <input type="file" id="imageInput" accept="image/png">
+            <button id="decodeBtn">Decode</button>
+            <p id="output"></p>
+            <script>
+                const decodeButton = document.getElementById("decodeBtn");
+                const imageInput = document.getElementById("imageInput");
+                const output = document.getElementById("output");
+
+                decodeButton.addEventListener("click", () => {
+                    const file = imageInput.files[0];
+                    if (!file) {
+                        alert("Please upload an image first.");
+                        return;
+                    }
+
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        const img = new Image();
+                        img.src = event.target.result;
+
+                        img.onload = () => {
+                            const canvas = document.createElement("canvas");
+                            canvas.width = img.width;
+                            canvas.height = img.height;
+
+                            const ctx = canvas.getContext("2d");
+                            ctx.drawImage(img, 0, 0);
+
+                            const imgData = ctx.getImageData(0, 0, img.width, img.height).data;
+                            let binaryData = "";
+
+                            for (let i = 0; i < imgData.length; i += 4) {
+                                binaryData += imgData[i] === 0 ? "0" : "1";
+                            }
+
+                            const byteArray = [];
+                            for (let i = 0; i < binaryData.length; i += 8) {
+                                byteArray.push(parseInt(binaryData.slice(i, i + 8), 2));
+                            }
+
+                            const audioBlob = new Blob([new Uint8Array(byteArray)], { type: "audio/mp3" });
+                            const downloadLink = document.createElement("a");
+                            downloadLink.href = URL.createObjectURL(audioBlob);
+                            downloadLink.download = "decoded_audio.mp3";
+                            downloadLink.textContent = "Download Decoded Audio";
+                            output.innerHTML = "";
+                            output.appendChild(downloadLink);
+                        };
+                    };
+                    reader.readAsDataURL(file);
+                });
+                const header = document.querySelector('header');
+                let timeout;
+
+                // Function to show the header when hovered
+                header.addEventListener('mouseenter', () => {
+                    clearTimeout(timeout); // Clear any existing timeouts
+                    header.classList.add('visible'); // Show the header immediately
+                });
+
+                // Function to hide the header after a certain period of inactivity
+                header.addEventListener('mouseleave', () => {
+                    timeout = setTimeout(() => {
+                        header.classList.remove('visible'); // Hide the header after the delay
+                    }, 1000); // 3 seconds (you can adjust this time)
+                });
+
+                // Optionally, you can also add a small buffer area at the top of the page to detect hover near the top
+                document.addEventListener('mousemove', (e) => {
+                    if (e.clientY <= 50) { // If the mouse is near the top of the screen
+                        header.classList.add('visible');
+                    }
+                });
+
+
+
+
+            </script>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2040 SotiCode. Designed and built by Sotiris.</p>
+    </footer>
+</body>
+
+</html>

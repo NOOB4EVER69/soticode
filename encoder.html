@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio to SotiCode</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+    <header>
+        <nav>
+            <a href="./index.html" class="logo">SotiCode</a>
+            <ul>
+                <li><a href="./encoder.html">Encoder</a></li>
+                <li><a href="./decoder.html">Decoder</a></li>
+                <li><a href="./about.html">About</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section>
+            <h1>Encode Audio into Binary Image</h1>
+            <p>Select an MP3 file (1-minute max) to generate a binary image.</p>
+            <input type="file" id="audioInput" accept="audio/mpeg">
+            <div id="binaryOutput"></div>
+            <script>
+                document.getElementById('audioInput').addEventListener('change', async function (event) {
+                    const file = event.target.files[0];
+                    const outputDiv = document.getElementById('binaryOutput');
+
+                    if (!file) {
+                        outputDiv.textContent = "Please select an audio file.";
+                        return;
+                    }
+
+                    if (file.type !== "audio/mpeg") {
+                        outputDiv.textContent = "Only MP3 files are supported.";
+                        return;
+                    }
+
+                    const arrayBuffer = await file.arrayBuffer();
+                    const uint8Array = new Uint8Array(arrayBuffer);
+                    const binaryString = Array.from(uint8Array)
+                        .map(byte => byte.toString(2).padStart(8, '0'))
+                        .join('');
+
+                    const bitsNeeded = 128000 * 60; // 1 minute at 128 kbps
+                    const truncatedBinary = binaryString.substring(0, bitsNeeded);
+
+                    outputDiv.innerHTML = `
+        <h3>Total Binary Size: ${binaryString.length} bits</h3>
+        <h3>Binary Used: ${truncatedBinary.length} bits</h3>
+    `;
+
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    const width = 1000;
+                    const height = Math.ceil(truncatedBinary.length / width);
+                    canvas.width = width;
+                    canvas.height = height;
+
+                    const imageData = ctx.createImageData(width, height);
+                    for (let i = 0; i < truncatedBinary.length; i++) {
+                        const bit = parseInt(truncatedBinary[i]);
+                        const color = bit === 0 ? 0 : 255;
+                        const idx = i * 4;
+                        imageData.data[idx] = color;
+                        imageData.data[idx + 1] = color;
+                        imageData.data[idx + 2] = color;
+                        imageData.data[idx + 3] = 255;
+                    }
+
+                    ctx.putImageData(imageData, 0, 0);
+                    document.body.appendChild(canvas);
+
+                    const downloadButton = document.createElement('button');
+                    downloadButton.textContent = "Download Image";
+                    downloadButton.onclick = () => {
+                        const link = document.createElement('a');
+                        link.href = canvas.toDataURL();
+                        link.download = "binary_image.png";
+                        link.click();
+                    };
+                    document.body.appendChild(downloadButton);
+                });
+                const header = document.querySelector('header');
+                let timeout;
+
+                // Function to show the header when hovered
+                header.addEventListener('mouseenter', () => {
+                    clearTimeout(timeout); // Clear any existing timeouts
+                    header.classList.add('visible'); // Show the header immediately
+                });
+
+                // Function to hide the header after a certain period of inactivity
+                header.addEventListener('mouseleave', () => {
+                    timeout = setTimeout(() => {
+                        header.classList.remove('visible'); // Hide the header after the delay
+                    }, 1000); // 3 seconds (you can adjust this time)
+                });
+
+                // Optionally, you can also add a small buffer area at the top of the page to detect hover near the top
+                document.addEventListener('mousemove', (e) => {
+                    if (e.clientY <= 50) { // If the mouse is near the top of the screen
+                        header.classList.add('visible');
+                    }
+                });
+
+
+
+
+            </script>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2040 SotiCode. Designed and built by Sotiris.</p>
+    </footer>
+</body>
+
+</html>
