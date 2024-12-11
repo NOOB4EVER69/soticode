@@ -33,7 +33,7 @@ I’ve always wanted to create something unique that pushes the boundaries of wh
 MIT License
 Soticode is open-source and released under the MIT License, so you can use it however you like! Fork it, improve it, or just explore how it works.
 
-if you want to know more see this docx file (soticode.docx)
+if you want to know more see this docx file [Learn More](soticode.docx)
 
 
 ## License
