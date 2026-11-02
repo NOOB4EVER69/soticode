@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "If you use SotiCode in your work, please cite it using this metadata."
+title: "SotiCode: Audio-to-Binary Image Encoding and Decoding"
+authors:
+  - family-names: "Saleh"
+    given-names: "Mustapha Mahmoud"
+version: 1.0.0
+date-released: 2026-11-02
+type: software
+license: MIT
+repository-code: "https://github.com/NOOB4EVER69/soticode"
+keywords:
+  - Audio Encoding
+  - Binary Image
+  - Data Representation
+  - JavaScript
+  - Open Source
